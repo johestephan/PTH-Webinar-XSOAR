@@ -1,0 +1,441 @@
+contentitemexportablefields:
+  contentitemfields:
+    definitionid: ""
+    fromServerVersion: ""
+    itemVersion: ""
+    packID: a5ee0000-06fb-408c-86cb-16160ef35363
+    packName: Feedly Report Contribution Pack
+    prevname: ""
+    propagationLabels:
+    - all
+    toServerVersion: ""
+dirtyInputs: true
+id: 84aeed48-4a45-401b-80a2-27eaac7f3d4f
+inputSections:
+- description: Generic group for inputs
+  inputs:
+  - FeedlyReportValue
+  - FeedlyReportDescription
+  name: General (Inputs group)
+inputs:
+- description: ""
+  key: FeedlyReportValue
+  playbookInputQuery: null
+  required: false
+  value: {}
+- description: ""
+  key: FeedlyReportDescription
+  playbookInputQuery: null
+  required: false
+  value: {}
+name: Parse Each Feedly Report
+outputSections:
+- description: Generic group for outputs
+  name: General (Outputs group)
+  outputs:
+  - FoundDomains
+  - FoundIPs
+  - FoundFiles
+outputs:
+- contextPath: FoundDomains
+  type: unknown
+- contextPath: FoundIPs
+  type: unknown
+- contextPath: FoundFiles
+  type: unknown
+starttaskid: "0"
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "14"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 1e553454-2d98-450f-8ef4-e00d0173c67a
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 1e553454-2d98-450f-8ef4-e00d0173c67a
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 65
+        }
+      }
+  "1":
+    continueonerrortype: ""
+    id: "1"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "2"
+      - "5"
+      - "6"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entities:
+        simple: ${inputs.FeedlyReportValue}
+      limit:
+        simple: "100"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: This automation outputs the indicator relationships to context
+        according to the provided query, using the entities, entityTypes, and relationships
+        arguments. All arguments will use the AND operator. For example, using the
+        following arguments entities=8.8.8.8 entities_types=Domain will provide only
+        relationships that the 8.8.8.8 indicator has with indicators of type domain.
+      id: d0fbcd0a-adfc-46d7-862e-25a7265f0be1
+      iscommand: false
+      name: Search Indicator Relationships
+      scriptName: SearchIndicatorRelationships
+      type: regular
+      version: -1
+    taskid: d0fbcd0a-adfc-46d7-862e-25a7265f0be1
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 750
+        }
+      }
+  "2":
+    continueonerrortype: ""
+    id: "2"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "12"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "true"
+      key:
+        simple: FoundDomains
+      value:
+        complex:
+          accessor: EntityB
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: Relationships.EntityBType
+              operator: isEqualString
+              right:
+                value:
+                  simple: Domain
+          root: Relationships
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 5dc014ce-ca43-471a-85e7-28da24687a35
+      iscommand: false
+      name: Get Found Domains
+      scriptName: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 5dc014ce-ca43-471a-85e7-28da24687a35
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 925
+        }
+      }
+  "5":
+    continueonerrortype: ""
+    id: "5"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "12"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "true"
+      key:
+        simple: FoundIPs
+      value:
+        complex:
+          accessor: EntityB
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: Relationships.EntityBType
+              operator: isEqualString
+              right:
+                value:
+                  simple: IP
+          root: Relationships
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 2925efa0-2cd7-45da-8e64-cf3221f644df
+      iscommand: false
+      name: Get Found IPs
+      scriptName: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 2925efa0-2cd7-45da-8e64-cf3221f644df
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 480,
+          "y": 925
+        }
+      }
+  "6":
+    continueonerrortype: ""
+    id: "6"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "12"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: FoundFiles
+      value:
+        complex:
+          accessor: EntityB
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: Relationships.EntityBType
+              operator: isEqualString
+              right:
+                value:
+                  simple: File
+          root: Relationships
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: ed3bbac8-e96f-416d-899a-ce0c8a95ac4a
+      iscommand: false
+      name: Get Found Files
+      scriptName: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: ed3bbac8-e96f-416d-899a-ce0c8a95ac4a
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 910,
+          "y": 925
+        }
+      }
+  "12":
+    continueonerrortype: ""
+    id: "12"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 07b0c268-6c8a-45b3-8779-a8f553541a86
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: 07b0c268-6c8a-45b3-8779-a8f553541a86
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 480,
+          "y": 1100
+        }
+      }
+  "13":
+    continueonerrortype: ""
+    id: "13"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "19"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      htmlBody:
+        simple: |
+          ${MarkdownToHTML.HTML}
+      subject:
+        simple: ${inputs.FeedlyReportValue}
+      to:
+        simple: xsoartest2@gmail.com
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: commands.server.mail.sendmail
+      id: 391e3d58-73ea-4738-811b-aa1b026b8ac5
+      iscommand: true
+      name: Send Report
+      script: '|||send-mail'
+      type: regular
+      version: -1
+    taskid: 391e3d58-73ea-4738-811b-aa1b026b8ac5
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 400
+        }
+      }
+  "14":
+    continueonerrortype: ""
+    id: "14"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      prettifyHTML:
+        simple: "True"
+      text:
+        simple: ${inputs.FeedlyReportDescription}
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Converts Markdown to HTML.
+      id: 52b816ec-6097-4307-820e-bbeb8798fbc9
+      iscommand: false
+      name: Convert Description to HTML
+      scriptName: MarkdownToHTML
+      type: regular
+      version: -1
+    taskid: 52b816ec-6097-4307-820e-bbeb8798fbc9
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 225
+        }
+      }
+  "19":
+    continueonerrortype: ""
+    id: "19"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "1"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: MarkdownToHTML
+      subplaybook:
+        simple: "yes"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Delete field from context.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 268a63a1-a8c6-4b44-8757-e645ad7760c8
+      iscommand: false
+      name: Delete Report
+      scriptName: DeleteContext
+      type: regular
+      version: -1
+    taskid: 268a63a1-a8c6-4b44-8757-e645ad7760c8
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 575
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {},
+    "paper": {
+      "dimensions": {
+        "height": 1100,
+        "width": 1240,
+        "x": 50,
+        "y": 65
+      }
+    }
+  }

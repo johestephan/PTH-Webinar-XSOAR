@@ -1,0 +1,997 @@
+contentitemexportablefields:
+  contentitemfields:
+    definitionid: ""
+    fromServerVersion: ""
+    itemVersion: ""
+    packID: a5ee0000-06fb-408c-86cb-16160ef35363
+    packName: Feedly Report Contribution Pack
+    prevname: ""
+    propagationLabels:
+    - all
+    toServerVersion: ""
+id: 735c4eb8-912c-4e0c-8f4e-5a6c3b4dd20e
+inputs: []
+name: Feedly Threat Intel Report Investigation
+outputs: []
+starttaskid: "0"
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "23"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 9042284c-5d20-4620-80ae-d258d3bd2753
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 9042284c-5d20-4620-80ae-d258d3bd2753
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 50
+        }
+      }
+  "1":
+    continueonerrortype: ""
+    id: "1"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "2"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      populateFields:
+        simple: id,value,score,investigationsCount,indicator_type,description
+      query:
+        simple: type:"Feedly Report" tags:"Indicators of Compromise"  tags:T1566 published:>=
+          ${5daysTimeNow}
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Gets a list of indicator objects and the associated indicator outputs
+        that match the specified query and filters. The results are returned in a
+        structured data file.
+      id: df3a192f-e454-4eb9-80da-e7aee43b1067
+      iscommand: false
+      name: Get Feedly Report
+      scriptName: GetIndicatorsByQuery
+      type: regular
+      version: -1
+    taskid: df3a192f-e454-4eb9-80da-e7aee43b1067
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 370
+        }
+      }
+  "2":
+    continueonerrortype: ""
+    id: "2"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "3"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      contextKey:
+        simple: FeedlyReports
+      entryID:
+        simple: ${File.EntryID}
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Loads a JSON file from the war room to context.
+      id: 121ba332-0078-40fa-8b55-bb410c0e1a57
+      iscommand: false
+      name: Load Feedly Reports to the Context
+      scriptName: LoadJSONFileToContext
+      type: regular
+      version: -1
+    taskid: 121ba332-0078-40fa-8b55-bb410c0e1a57
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 545
+        }
+      }
+  "3":
+    continueonerrortype: ""
+    id: "3"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    loop:
+      exitCondition: ""
+      forEach: true
+      iscommand: false
+      max: 100
+      wait: 1
+    nexttasks:
+      '#none#':
+      - "9"
+      - "12"
+      - "6"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      FeedlyReportDescription:
+        simple: ${FeedlyReports.description}
+      FeedlyReportValue:
+        simple: ${FeedlyReports.value}
+    separatecontext: true
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 1692a84d-b6dc-4cf3-85f4-07f9960b7d79
+      iscommand: false
+      name: Parse Each Feedly Report
+      playbookId: 84aeed48-4a45-401b-80a2-27eaac7f3d4f
+      type: playbook
+      version: -1
+    taskid: 1692a84d-b6dc-4cf3-85f4-07f9960b7d79
+    timertriggers: []
+    type: playbook
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 720
+        }
+      }
+  "4":
+    continueonerrortype: ""
+    id: "4"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "16"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: XDRDNSResults=results
+      query:
+        simple: "dataset = xdr_data\n | filter dns_query_name in ${XQLDNSQuery} \n|
+          dedup action_remote_ip,dns_query_name, agent_hostname, actor_process_image_name,
+          actor_process_signature_status\n| fields action_remote_ip,dns_query_name,agent_hostname,
+          actor_process_image_name, actor_process_signature_status"
+      query_name:
+        simple: '"Threat Hunting"'
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Cortex XDR - XQL Query Engine
+      description: |-
+        Execute an XQL query and retrieve results of an executed XQL query API. The command will be executed every 10 seconds until results are retrieved or until a timeout error is raised.
+        When more than 1000 results are retrieved, the command will return a compressed gzipped JSON format file,
+        unless the argument 'parse_result_file_to_context' is set to true and then the results will be extracted to the context.
+      id: c630f122-33eb-433c-8ca4-52afe8e22c2f
+      iscommand: true
+      name: Perform XQL DNS Query
+      script: Cortex XDR - XQL Query Engine|||xdr-xql-generic-query
+      type: regular
+      version: -1
+    taskid: c630f122-33eb-433c-8ca4-52afe8e22c2f
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1052.5,
+          "y": 1420
+        }
+      }
+  "5":
+    continueonerrortype: ""
+    id: "5"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "4"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: XQLDNSQuery
+      value:
+        complex:
+          root: FoundDomains
+          transformers:
+          - args:
+              prefix:
+                value:
+                  simple: '"'
+              suffix:
+                value:
+                  simple: '"'
+            operator: concat
+          - args:
+              separator:
+                value:
+                  simple: ','
+            operator: join
+          - args:
+              prefix:
+                value:
+                  simple: (
+              suffix:
+                value:
+                  simple: )
+            operator: concat
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 4265a525-7959-4cd8-8516-e5489b1d2443
+      iscommand: false
+      name: XQL DNS Query
+      scriptName: Set
+      type: regular
+      version: -1
+    taskid: 4265a525-7959-4cd8-8516-e5489b1d2443
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1052.5,
+          "y": 1245
+        }
+      }
+  "6":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: FoundDomains
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "6"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      "yes":
+      - "5"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: c62a9193-6ff1-4e4a-814e-d8a8279ba6a7
+      iscommand: false
+      name: Is there a domain?
+      type: condition
+      version: -1
+    taskid: c62a9193-6ff1-4e4a-814e-d8a8279ba6a7
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 1052.5,
+          "y": 1070
+        }
+      }
+  "7":
+    continueonerrortype: ""
+    id: "7"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: XDRIPResults=results
+      ignore-outputs:
+        simple: "true"
+      query:
+        simple: "dataset = xdr_data\n | filter action_remote_ip  in ${XQLIPQuery}
+          \n| dedup action_remote_ip, agent_hostname, actor_process_image_name, actor_process_signature_status\n|
+          fields action_remote_ip,agent_hostname, actor_process_image_name, actor_process_signature_status"
+      query_name:
+        simple: '"Threat Hunting IP"'
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Cortex XDR - XQL Query Engine
+      description: |-
+        Execute an XQL query and retrieve results of an executed XQL query API. The command will be executed every 10 seconds until results are retrieved or until a timeout error is raised.
+        When more than 1000 results are retrieved, the command will return a compressed gzipped JSON format file,
+        unless the argument 'parse_result_file_to_context' is set to true and then the results will be extracted to the context.
+      id: 19e3313a-e8b0-430f-8265-fcb381e78db2
+      iscommand: true
+      name: Perform XQL IP Query
+      script: Cortex XDR - XQL Query Engine|||xdr-xql-generic-query
+      type: regular
+      version: -1
+    taskid: 19e3313a-e8b0-430f-8265-fcb381e78db2
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1245
+        }
+      }
+  "8":
+    continueonerrortype: ""
+    id: "8"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "7"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: XQLIPQuery
+      value:
+        complex:
+          root: FoundIPs
+          transformers:
+          - args:
+              prefix:
+                value:
+                  simple: '"'
+              suffix:
+                value:
+                  simple: '"'
+            operator: concat
+          - args:
+              separator:
+                value:
+                  simple: ','
+            operator: join
+          - args:
+              prefix:
+                value:
+                  simple: (
+              suffix:
+                value:
+                  simple: )
+            operator: concat
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 18ad4e86-cc6f-44a3-8a74-58b73bf05be5
+      iscommand: false
+      name: XQL IP Query
+      scriptName: Set
+      type: regular
+      version: -1
+    taskid: 18ad4e86-cc6f-44a3-8a74-58b73bf05be5
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1070
+        }
+      }
+  "9":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: FoundIPs
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "9"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      "yes":
+      - "8"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 86d0719e-2069-4d32-80bd-6f81ea7d2d02
+      iscommand: false
+      name: Is there a IP?
+      type: condition
+      version: -1
+    taskid: 86d0719e-2069-4d32-80bd-6f81ea7d2d02
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 895
+        }
+      }
+  "10":
+    continueonerrortype: ""
+    id: "10"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "18"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: XDRFileResults=results
+      ignore-outputs:
+        simple: "true"
+      query:
+        simple: "dataset = xdr_data\n | filter action_file_sha256  in ${XQLFileQuery}
+          \n| dedup action_file_sha256,dns_query_name, agent_hostname, actor_process_image_name,
+          actor_process_signature_status\n| fields action_file_md5,dns_query_name,agent_hostname,
+          actor_process_image_name, actor_process_signature_status"
+      query_name:
+        simple: '"Threat Hunting File"'
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Cortex XDR - XQL Query Engine
+      description: |-
+        Execute an XQL query and retrieve results of an executed XQL query API. The command will be executed every 10 seconds until results are retrieved or until a timeout error is raised.
+        When more than 1000 results are retrieved, the command will return a compressed gzipped JSON format file,
+        unless the argument 'parse_result_file_to_context' is set to true and then the results will be extracted to the context.
+      id: 723f862a-2850-467b-865f-94124782fb7a
+      iscommand: true
+      name: Perform XQL File Query
+      script: Cortex XDR - XQL Query Engine|||xdr-xql-generic-query
+      type: regular
+      version: -1
+    taskid: 723f862a-2850-467b-865f-94124782fb7a
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 1420
+        }
+      }
+  "11":
+    continueonerrortype: ""
+    id: "11"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "10"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: XQLFileQuery
+      value:
+        complex:
+          root: FoundFiles
+          transformers:
+          - args:
+              error_if_no_match: {}
+              ignore_case: {}
+              multi_line: {}
+              period_matches_newline: {}
+              regex:
+                value:
+                  simple: ^[a-fA-F0-9]{64}$
+              unpack_matches: {}
+            operator: RegexExtractAll
+          - args:
+              prefix:
+                value:
+                  simple: '"'
+              suffix:
+                value:
+                  simple: '"'
+            operator: concat
+          - args:
+              separator:
+                value:
+                  simple: ','
+            operator: join
+          - args:
+              prefix:
+                value:
+                  simple: (
+              suffix:
+                value:
+                  simple: )
+            operator: concat
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: dc16da86-49e3-4483-8048-142b325fbf1b
+      iscommand: false
+      name: XQL File Query
+      scriptName: Set
+      type: regular
+      version: -1
+    taskid: dc16da86-49e3-4483-8048-142b325fbf1b
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 1245
+        }
+      }
+  "12":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: FoundFiles
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "12"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      "yes":
+      - "11"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 79a70b22-066b-4f3b-8b73-d243c753b97c
+      iscommand: false
+      name: Is there a File?
+      type: condition
+      version: -1
+    taskid: 79a70b22-066b-4f3b-8b73-d243c753b97c
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 1070
+        }
+      }
+  "13":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: XDRIPResults
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "13"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "20"
+      "yes":
+      - "14"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 52c4d5d3-4771-4702-89ea-15eb74473b79
+      iscommand: false
+      name: Has IP Query Results?
+      type: condition
+      version: -1
+    taskid: 52c4d5d3-4771-4702-89ea-15eb74473b79
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1420
+        }
+      }
+  "14":
+    continueonerrortype: ""
+    fieldMapping:
+    - incidentfield: IP Query Results
+      output:
+        simple: ${customqueryipmarkdown}
+    id: "14"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "21"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: customqueryipmarkdown=.
+      value:
+        complex:
+          root: XDRIPResults
+          transformers:
+          - args:
+              empty_values:
+                value:
+                  simple: FALSE,null,UNKNOWN,NO
+              remove_keys:
+                value:
+                  simple: "true"
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Accepts a json object and returns a markdown.
+      id: c353fe0d-b147-4583-8fb0-5a03fd0ef81c
+      iscommand: false
+      name: Set IP Query Results to Layout
+      scriptName: JsonToTable
+      type: regular
+      version: -1
+    taskid: c353fe0d-b147-4583-8fb0-5a03fd0ef81c
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 1595
+        }
+      }
+  "16":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: XDRDNSResults
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "16"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "20"
+      "yes":
+      - "17"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: dba3bd7f-45a4-463d-8e26-458bf30d577e
+      iscommand: false
+      name: Has DNS Query Results?
+      type: condition
+      version: -1
+    taskid: dba3bd7f-45a4-463d-8e26-458bf30d577e
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 1052.5,
+          "y": 1595
+        }
+      }
+  "17":
+    continueonerrortype: ""
+    fieldMapping:
+    - incidentfield: DNS Name
+      output:
+        simple: ${customquerydnsmarkdown}
+    id: "17"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "20"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: customquerydnsmarkdown=.
+      value:
+        complex:
+          root: XDRDNSResults
+          transformers:
+          - args:
+              empty_values:
+                value:
+                  simple: FALSE,null,UNKNOWN,NO
+              remove_keys:
+                value:
+                  simple: "true"
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Accepts a json object and returns a markdown.
+      id: 1760b46e-49a8-4dfe-8c42-fd3a83fbf8ed
+      iscommand: false
+      name: Set DNS Query Results to Layout
+      scriptName: JsonToTable
+      type: regular
+      version: -1
+    taskid: 1760b46e-49a8-4dfe-8c42-fd3a83fbf8ed
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1165,
+          "y": 1770
+        }
+      }
+  "18":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: XDRFileResults
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "18"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "20"
+      "yes":
+      - "19"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: e48a1061-0ad3-4021-8b19-1277cb2c7104
+      iscommand: false
+      name: Has File Query Results?
+      type: condition
+      version: -1
+    taskid: e48a1061-0ad3-4021-8b19-1277cb2c7104
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 1595
+        }
+      }
+  "19":
+    continueonerrortype: ""
+    fieldMapping:
+    - incidentfield: File Query Results
+      output:
+        simple: ${customqueryfilemarkdown}
+    id: "19"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "20"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: customqueryfilemarkdown=.
+      value:
+        complex:
+          root: XDRFileResults
+          transformers:
+          - args:
+              empty_values:
+                value:
+                  simple: FALSE,null,UNKNOWN,NO
+              remove_keys:
+                value:
+                  simple: "true"
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Accepts a json object and returns a markdown.
+      id: e4b3c4fa-56c4-4f9e-8797-746f1d8be517
+      iscommand: false
+      name: Set File Query Results to Layout
+      scriptName: JsonToTable
+      type: regular
+      version: -1
+    taskid: e4b3c4fa-56c4-4f9e-8797-746f1d8be517
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 715,
+          "y": 1770
+        }
+      }
+  "20":
+    continueonerrortype: ""
+    id: "20"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 9dd5dd79-0d76-458b-8684-c9352994c782
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: 9dd5dd79-0d76-458b-8684-c9352994c782
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 1945
+        }
+      }
+  "21":
+    continueonerrortype: ""
+    id: "21"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "20"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      affectedhosts:
+        simple: ${XDRIPResults.agent_hostname}
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: commands.local.cmd.set.incident
+      id: 09f8c38e-89af-4c42-81af-89e179a4aba1
+      iscommand: true
+      name: Set Affected Hosts
+      script: Builtin|||setIncident
+      type: regular
+      version: -1
+    taskid: 09f8c38e-89af-4c42-81af-89e179a4aba1
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 1770
+        }
+      }
+  "23":
+    continueonerrortype: ""
+    id: "23"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "1"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      contextKey:
+        simple: 5days
+      dateFormat:
+        simple: ISO
+      daysAgo:
+        simple: "5"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |
+        Retrieves the current date and time.
+      id: d1b8b75b-0ce8-4511-872a-50833b3594a2
+      iscommand: false
+      name: Get Time
+      scriptName: GetTime
+      type: regular
+      version: -1
+    taskid: d1b8b75b-0ce8-4511-872a-50833b3594a2
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 602.5,
+          "y": 195
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {},
+    "paper": {
+      "dimensions": {
+        "height": 1960,
+        "width": 1495,
+        "x": 50,
+        "y": 50
+      }
+    }
+  }

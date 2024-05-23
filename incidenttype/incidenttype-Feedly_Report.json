@@ -1,0 +1,39 @@
+{
+	"autorun": false,
+	"cacheVersn": 0,
+	"closureScript": "",
+	"color": "#FF6409",
+	"days": 0,
+	"daysR": 0,
+	"default": false,
+	"definitionId": "",
+	"detached": false,
+	"disabled": false,
+	"extractSettings": {
+		"fieldCliNameToExtractSettings": {},
+		"mode": "Specific"
+	},
+	"fromServerVersion": "",
+	"hours": 0,
+	"hoursR": 0,
+	"id": "Feedly Report",
+	"itemVersion": "",
+	"layout": "73fdcff0-3853-413f-8c3e-eeebe6519019",
+	"locked": false,
+	"name": "Feedly Report",
+	"onChangeRepAlg": 0,
+	"packID": "a5ee0000-06fb-408c-86cb-16160ef35363",
+	"packName": "Feedly Report Contribution Pack",
+	"playbookId": "735c4eb8-912c-4e0c-8f4e-5a6c3b4dd20e",
+	"preProcessingScript": "",
+	"propagationLabels": [
+		"all"
+	],
+	"readonly": false,
+	"reputationCalc": 0,
+	"system": false,
+	"toServerVersion": "",
+	"version": -1,
+	"weeks": 0,
+	"weeksR": 0
+}

@@ -1,0 +1,140 @@
+{
+	"id": "a5ee0000-06fb-408c-86cb-16160ef35363",
+	"version": 0,
+	"cacheVersn": 0,
+	"modified": "0001-01-01T00:00:00Z",
+	"sizeInBytes": 0,
+	"packID": "",
+	"packName": "",
+	"itemVersion": "",
+	"fromServerVersion": "",
+	"toServerVersion": "",
+	"definitionId": "",
+	"vcShouldIgnore": false,
+	"vcShouldKeepItemLegacyProdMachine": false,
+	"commitMessage": "",
+	"shouldCommit": false,
+	"currentVersion": "",
+	"name": "Feedly Report Contribution Pack",
+	"description": "",
+	"updated": "0001-01-01T00:00:00Z",
+	"created": "2024-05-23T07:15:27.060178164Z",
+	"support": "internalContribution",
+	"author": "Goezde Yildiz",
+	"authorImage": "",
+	"supportDetails": {
+		"url": "",
+		"email": "gyldz@paloaltonetworks.com"
+	},
+	"beta": false,
+	"deprecated": false,
+	"certification": "none",
+	"serverMinVersion": "",
+	"serverMaxVersion": "",
+	"general": null,
+	"tags": null,
+	"rawTags": null,
+	"categories": null,
+	"contentItems": {
+		"integration": null,
+		"automation": null,
+		"incidentfield": null,
+		"incidenttype": null,
+		"indicatorfield": null,
+		"reputation": null,
+		"report": null,
+		"dashboard": null,
+		"playbook": null,
+		"classifier": null,
+		"layoutscontainer": null,
+		"widget": null,
+		"list": null,
+		"generictype": null,
+		"genericfield": null,
+		"wizard": null
+	},
+	"contentItemTypes": null,
+	"integrations": null,
+	"useCases": null,
+	"rawUseCases": null,
+	"keywords": null,
+	"rawKeywords": null,
+	"dependencies": {
+		"Base": {
+			"mandatory": true,
+			"minVersion": "1.34.4",
+			"name": "Base",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		},
+		"CommonScripts": {
+			"mandatory": true,
+			"minVersion": "1.14.48",
+			"name": "Common Scripts",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		},
+		"CommonTypes": {
+			"mandatory": true,
+			"minVersion": "3.5.3",
+			"name": "Common Types",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		},
+		"CommunityCommonScripts": {
+			"mandatory": true,
+			"minVersion": "1.2.1",
+			"name": "Community Common Scripts",
+			"certification": "",
+			"author": ""
+		},
+		"CortexXDR": {
+			"mandatory": true,
+			"minVersion": "6.1.30",
+			"name": "Cortex XDR by Palo Alto Networks",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		},
+		"FiltersAndTransformers": {
+			"mandatory": true,
+			"minVersion": "1.2.70",
+			"name": "Filters And Transformers",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		},
+		"GmailSingleUser": {
+			"mandatory": true,
+			"minVersion": "1.3.13",
+			"name": "Gmail Single User",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		},
+		"MailSenderNew": {
+			"mandatory": true,
+			"minVersion": "1.0.26",
+			"name": "Mail Sender (New)",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		},
+		"ProactiveThreatHunting": {
+			"mandatory": true,
+			"minVersion": "1.0.2",
+			"name": "Proactive Threat Hunting",
+			"certification": "certified",
+			"author": "Cortex XSOAR"
+		}
+	},
+	"legacy": false,
+	"price": 0,
+	"premium": false,
+	"installMessage": "",
+	"versionInfo": "",
+	"eulaLink": "",
+	"previewOnly": false,
+	"downloads": 0,
+	"searchRank": 0,
+	"videos": null,
+	"prevName": "",
+	"modules": null,
+	"hybrid": false
+}
